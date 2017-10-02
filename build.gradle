@@ -1,0 +1,14 @@
+group 'com.github.igorperikov.java-raft'
+version '0.1'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}

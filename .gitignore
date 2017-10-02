@@ -1,0 +1,11 @@
+*.bat
+
+*.iml
+.idea/
+
+build/
+*.class
+
+build
+
+.gradletasknamecache
