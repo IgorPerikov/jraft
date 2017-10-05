@@ -1,7 +1,20 @@
-group 'com.github.igorperikov.java-raft'
+buildscript {
+    ext {
+        springBootVersion = '1.5.7.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+group 'com.github.igorperikov.jraft'
 version '0.1'
 
 apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
 
 sourceCompatibility = 1.8
 
@@ -10,5 +23,7 @@ repositories {
 }
 
 dependencies {
-
+    compile 'org.springframework.retry:spring-retry'
+    compile 'org.springframework.boot:spring-boot-starter'
+    compileOnly 'org.projectlombok:lombok'
 }
