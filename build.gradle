@@ -22,8 +22,25 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    jsr305Version = '3.0.2'
+    jacksonVersion = '2.9.1'
+    guavaVersion = '23.0'
+    junit5Version = '5.0.0'
+}
+
 dependencies {
-    compile 'org.springframework.retry:spring-retry'
-    compile 'org.springframework.boot:spring-boot-starter'
-    compileOnly 'org.projectlombok:lombok'
+    compile "org.springframework.retry:spring-retry"
+    compile "org.springframework.boot:spring-boot-starter"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    compile "com.google.code.findbugs:jsr305:${jsr305Version}"
+
+    compile "com.google.guava:guava:${guavaVersion}"
+
+    compile "org.junit.jupiter:junit-jupiter-api:${junit5Version}"
+    compile "org.junit.jupiter:junit-jupiter-engine:${junit5Version}"
+
+    compileOnly "org.projectlombok:lombok"
 }
