@@ -1,0 +1,1 @@
+{"src":"node2","dest":"node1","body":{"type":"raft_init", "value1":"vdf"}}

@@ -7,12 +7,16 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @AllArgsConstructor
-public class IncomingMessagesReader {
+public class MessagesReader {
     private final ObjectMapper objectMapper;
-    private final ExecutorService executorService;
     private final MessageDispatcher messageDispatcher;
+    private final MessageValidator messageValidator;
+    private final MessageWriter messageWriter;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @PostConstruct
     private void start() {
@@ -22,14 +26,20 @@ public class IncomingMessagesReader {
                 if (scanner.hasNext()) {
                     String jsonMessage = scanner.nextLine();
                     try {
-                        MaelstromMessage maelstromMessage = objectMapper.readValue(jsonMessage, MaelstromMessage.class);
-                        messageDispatcher.dispatchMessage(maelstromMessage);
+                        readMessage(jsonMessage);
                     } catch (IOException e) {
                         e.printStackTrace(System.err);
                     }
                 }
             }
         });
+    }
+
+    private void readMessage(String jsonMessage) throws IOException {
+        MaelstromMessage maelstromMessage = objectMapper.readValue(jsonMessage, MaelstromMessage.class);
+        messageValidator.validate(maelstromMessage);
+        MaelstromMessage response = messageDispatcher.dispatchMessage(maelstromMessage);
+        messageWriter.write(response);
     }
 
     private void destroy() {

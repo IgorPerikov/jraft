@@ -8,13 +8,12 @@ public class MessageDispatcher {
 
     private final RaftInitHandler raftInitHandler;
 
-    public void dispatchMessage(MaelstromMessage message) {
+    public MaelstromMessage dispatchMessage(MaelstromMessage message) {
         // TODO: casting
         String type = (String) message.getBody().get(TYPE_KEY_NAME);
         switch (type) {
             case MessageTypes.RAFT_INIT:
-                raftInitHandler.handle(message);
-                break;
+                return raftInitHandler.handle(message);
             default:
                 throw new RuntimeException("'" + type + "' type is not handled yet");
         }

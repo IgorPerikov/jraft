@@ -12,28 +12,37 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RaftInitHandlerTest {
     /**
-     * these names defined on Maelstrom side
+     * these names are defined on Maelstrom side
      */
     private static final String BODY_MESSAGE_NODE_ID_NAME = "node_id";
     private static final String BODY_MESSAGE_NODE_IDS_NAME = "node_ids";
+    private static final String BODY_MESSAGE_MSG_ID_NAME = "msg_id";
 
     @Test
     void shouldCorrectlyInitNodeState() {
         Node node = new Node();
         MessageDispatcher dispatcher = new MessageDispatcher(new RaftInitHandler(node));
         String nodeId = "my-node-id";
+        Integer msgId = 111;
+
         List<String> nodeIds = Lists.newArrayList(nodeId, "my-node-id-2");
-        Map<String, Object> body = new HashMap<>();
-        body.put("type", MessageTypes.RAFT_INIT);
-        body.put(BODY_MESSAGE_NODE_ID_NAME, nodeId);
-        body.put(BODY_MESSAGE_NODE_IDS_NAME, nodeIds);
-        MaelstromMessage message = new MaelstromMessage("src", nodeId, body);
-        dispatcher.dispatchMessage(message);
+        MaelstromMessage response = dispatcher.dispatchMessage(buildMessage(nodeId, nodeIds, msgId));
 
         assertAll(
                 () -> assertEquals(nodeId, node.getId()),
                 () -> assertIterableEquals(nodeIds, node.getNodeIds()),
-                () -> assertEquals(2, node.getNodeIds().size())
+                () -> assertEquals(2, node.getNodeIds().size()),
+                () -> assertEquals(MessageTypes.RAFT_INIT_OK, response.getBody().get("type")),
+                () -> assertEquals(msgId, response.getBody().get("in_reply_to"))
         );
+    }
+
+    private MaelstromMessage buildMessage(String nodeId, List<String> nodeIds, Integer msgId) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("type", MessageTypes.RAFT_INIT);
+        body.put(BODY_MESSAGE_NODE_ID_NAME, nodeId);
+        body.put(BODY_MESSAGE_NODE_IDS_NAME, nodeIds);
+        body.put(BODY_MESSAGE_MSG_ID_NAME, msgId);
+        return new MaelstromMessage("src", nodeId, body);
     }
 }

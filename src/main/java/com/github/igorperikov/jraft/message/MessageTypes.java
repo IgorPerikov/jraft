@@ -2,6 +2,7 @@ package com.github.igorperikov.jraft.message;
 
 public class MessageTypes {
     public static final String RAFT_INIT = "raft_init";
+    public static final String RAFT_INIT_OK = "raft_init_ok";
     public static final String ERROR = "error";
     public static final String WRITE = "write";
     public static final String WRITE_OK = "write_ok";
