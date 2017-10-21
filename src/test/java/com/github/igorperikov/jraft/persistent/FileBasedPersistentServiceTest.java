@@ -3,6 +3,7 @@ package com.github.igorperikov.jraft.persistent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.igorperikov.jraft.domain.Command;
 import com.github.igorperikov.jraft.domain.LogEntry;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -59,5 +60,18 @@ public class FileBasedPersistentServiceTest {
                 () -> assertEquals(1, newPersistentService.getLog().size()),
                 () -> assertEquals(entry, newPersistentService.getLog().iterator().next())
         );
+    }
+
+    @AfterEach
+    void destroyInitialState() {
+        persistentService.pathsToFiles().stream()
+                .filter(Files::exists)
+                .forEach(path -> {
+                    try {
+                        Files.delete(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 }

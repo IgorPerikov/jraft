@@ -17,7 +17,6 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-@Service
 @AllArgsConstructor
 public class FileBasedPersistentService implements PersistentService {
     private static final String JRAFT_STORAGE_PREFIX_NAME = "jraft";

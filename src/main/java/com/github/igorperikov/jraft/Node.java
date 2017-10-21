@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -24,4 +26,10 @@ public class Node {
     private Map<String, Integer> nextIndexes = new HashMap<>();
     // for each server, index of highest log entry known to be replicated on server(init to 0, increases monotonically)
     private Map<String, Integer> matchIndexes = new HashMap<>();
+
+    private final List<String> nodeIds = new ArrayList<>();
+
+    public void addNodeIds(List<String> nodeIds) {
+        this.nodeIds.addAll(nodeIds);
+    }
 }
