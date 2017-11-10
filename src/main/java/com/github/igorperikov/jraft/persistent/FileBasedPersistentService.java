@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.igorperikov.jraft.domain.LogEntry;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;

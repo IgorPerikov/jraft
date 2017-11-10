@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBasedPersistentServiceTest {
     private static final String NODE_ID = "node_id";
@@ -21,15 +22,7 @@ public class FileBasedPersistentServiceTest {
     @BeforeEach
     void setupInitialState() {
         persistentService = new FileBasedPersistentService(NODE_ID, objectMapper);
-        persistentService.pathsToFiles().stream()
-                .filter(Files::exists)
-                .forEach(path -> {
-                    try {
-                        Files.delete(path);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+        deleteFiles();
     }
 
     @Test
@@ -64,6 +57,10 @@ public class FileBasedPersistentServiceTest {
 
     @AfterEach
     void destroyInitialState() {
+        deleteFiles();
+    }
+
+    private void deleteFiles() {
         persistentService.pathsToFiles().stream()
                 .filter(Files::exists)
                 .forEach(path -> {

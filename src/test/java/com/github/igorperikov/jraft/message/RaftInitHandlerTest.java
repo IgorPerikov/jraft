@@ -11,9 +11,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RaftInitHandlerTest {
-    /**
-     * these names are defined on Maelstrom side
-     */
     private static final String BODY_MESSAGE_NODE_ID_NAME = "node_id";
     private static final String BODY_MESSAGE_NODE_IDS_NAME = "node_ids";
     private static final String BODY_MESSAGE_MSG_ID_NAME = "msg_id";
