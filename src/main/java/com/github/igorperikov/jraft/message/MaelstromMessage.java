@@ -2,11 +2,13 @@ package com.github.igorperikov.jraft.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Map;
 
 @AllArgsConstructor
 @Getter
+@ToString
 public class MaelstromMessage {
     private final String src;
     private final String dest;

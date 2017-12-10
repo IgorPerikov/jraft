@@ -1,5 +1,6 @@
 package com.github.igorperikov.jraft.message;
 
+import com.github.igorperikov.jraft.message.handler.RaftInitHandler;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

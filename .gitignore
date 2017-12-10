@@ -9,3 +9,5 @@ build/
 build
 
 .gradletasknamecache
+
+raft-maelstrom-test

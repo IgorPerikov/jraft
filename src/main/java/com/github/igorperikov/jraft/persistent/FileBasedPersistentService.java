@@ -137,7 +137,7 @@ public class FileBasedPersistentService implements PersistentService {
         }
     }
 
-    // TODO:
+    // TODO: for tests only
     public List<Path> pathsToFiles() {
         return Lists.newArrayList(
                 buildFilePath(CURRENT_TERM_FILE_NAME),

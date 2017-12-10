@@ -2,14 +2,17 @@ package com.github.igorperikov.jraft.message;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
+@Slf4j
 public class MessagesReader {
     private final ObjectMapper objectMapper;
     private final MessageDispatcher messageDispatcher;
@@ -28,8 +31,14 @@ public class MessagesReader {
                     try {
                         readMessage(jsonMessage);
                     } catch (IOException e) {
-                        e.printStackTrace(System.err);
+                        log.error("", e);
                     }
+                }
+                try {
+                    // TODO: reduce load on system
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException e) {
+                    log.error("", e);
                 }
             }
         });
