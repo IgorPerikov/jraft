@@ -6,7 +6,7 @@ import com.github.igorperikov.jraft.message.MessageDispatcher;
 import com.github.igorperikov.jraft.message.MessageValidator;
 import com.github.igorperikov.jraft.message.MessageWriter;
 import com.github.igorperikov.jraft.message.MessagesReader;
-import com.github.igorperikov.jraft.message.handler.RaftInitHandler;
+import com.github.igorperikov.jraft.message.handler.*;
 import com.github.igorperikov.jraft.persistent.FileBasedPersistentService;
 import com.github.igorperikov.jraft.persistent.PersistentService;
 import org.springframework.context.annotation.Bean;
@@ -40,8 +40,20 @@ public class AppConfiguration {
     }
 
     @Bean
-    public MessageDispatcher messageDispatcher(RaftInitHandler raftInitHandler) {
-        return new MessageDispatcher(raftInitHandler);
+    public MessageDispatcher messageDispatcher(
+            RaftInitHandler raftInitHandler,
+            WriteMessageHandler writeMessageHandler,
+            ReadMessageHandler readMessageHandler,
+            CasMessageHandler casMessageHandler,
+            DeleteMessageHandler deleteMessageHandler
+    ) {
+        return new MessageDispatcher(
+                raftInitHandler,
+                writeMessageHandler,
+                readMessageHandler,
+                casMessageHandler,
+                deleteMessageHandler
+        );
     }
 
     @Bean
@@ -52,5 +64,25 @@ public class AppConfiguration {
     @Bean
     public RaftInitHandler raftInitHandler(Node node) {
         return new RaftInitHandler(node);
+    }
+
+    @Bean
+    public WriteMessageHandler writeMessageHandler(Node node) {
+        return new WriteMessageHandler(node);
+    }
+
+    @Bean
+    public ReadMessageHandler readMessageHandler(Node node) {
+        return new ReadMessageHandler(node);
+    }
+
+    @Bean
+    public CasMessageHandler casMessageHandler(Node node) {
+        return new CasMessageHandler(node);
+    }
+
+    @Bean
+    public DeleteMessageHandler deleteMessageHandler(Node node) {
+        return new DeleteMessageHandler(node);
     }
 }
