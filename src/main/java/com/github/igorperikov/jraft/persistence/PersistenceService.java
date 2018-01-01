@@ -1,11 +1,11 @@
-package com.github.igorperikov.jraft.persistent;
+package com.github.igorperikov.jraft.persistence;
 
 import com.github.igorperikov.jraft.domain.LogEntry;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public interface PersistentService {
+public interface PersistenceService {
     // latest term server has seen(init to 0 on first boot, inc monotonically)
     int getCurrentTerm();
     void setCurrentTerm(int currentTerm);
@@ -18,4 +18,6 @@ public interface PersistentService {
     @Nonnull
     List<LogEntry> getLog();
     void appendEntry(LogEntry entry);
+
+    void destroy();
 }

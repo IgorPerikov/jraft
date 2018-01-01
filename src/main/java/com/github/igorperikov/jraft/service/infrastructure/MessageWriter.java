@@ -1,17 +1,24 @@
-package com.github.igorperikov.jraft.message;
+package com.github.igorperikov.jraft.service.infrastructure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@AllArgsConstructor
+@Component
 @Slf4j
 public class MessageWriter {
     private final ObjectMapper objectMapper;
 
+    @Autowired
+    public MessageWriter(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     public void write(MaelstromMessage response) {
+        log.info("Writing response: {}", response);
         try {
             objectMapper.writeValue(System.out, response);
         } catch (IOException e) {

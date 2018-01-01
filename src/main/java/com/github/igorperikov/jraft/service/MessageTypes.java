@@ -1,6 +1,7 @@
-package com.github.igorperikov.jraft.message;
+package com.github.igorperikov.jraft.service;
 
 public class MessageTypes {
+    // message types
     public static final String RAFT_INIT = "raft_init";
     public static final String RAFT_INIT_OK = "raft_init_ok";
     public static final String ERROR = "error";
@@ -12,4 +13,6 @@ public class MessageTypes {
     public static final String CAS_OK = "cas_ok";
     public static final String DELETE = "delete";
     public static final String DELETE_OK = "delete_ok";
+    public static final String APPEND_ENTRIES_RPC = "append_entries";
+    public static final String REQUEST_VOTE_RPC = "request_vote";
 }

@@ -29,6 +29,8 @@ public class Node {
 
     private final List<String> nodeIds = new ArrayList<>();
 
+    private boolean isInitialized = false;
+
     public void addNodeIds(List<String> nodeIds) {
         this.nodeIds.addAll(nodeIds);
     }

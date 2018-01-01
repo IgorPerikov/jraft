@@ -1,4 +1,4 @@
-package com.github.igorperikov.jraft.message;
+package com.github.igorperikov.jraft.service.infrastructure;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

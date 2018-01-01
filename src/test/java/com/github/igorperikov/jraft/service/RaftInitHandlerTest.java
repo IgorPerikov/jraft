@@ -1,8 +1,13 @@
-package com.github.igorperikov.jraft.message;
+package com.github.igorperikov.jraft.service;
 
 import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.NodeState;
-import com.github.igorperikov.jraft.message.handler.*;
+import com.github.igorperikov.jraft.service.client.CasMessageHandler;
+import com.github.igorperikov.jraft.service.client.DeleteMessageHandler;
+import com.github.igorperikov.jraft.service.client.ReadMessageHandler;
+import com.github.igorperikov.jraft.service.client.WriteMessageHandler;
+import com.github.igorperikov.jraft.service.infrastructure.MaelstromMessage;
+import com.github.igorperikov.jraft.service.infrastructure.MessageDispatcher;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +17,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RaftInitHandlerTest {
+class RaftInitHandlerTest {
     @Test
     void should_correctly_init_node_state() {
         Node node = new Node();
@@ -28,21 +33,22 @@ public class RaftInitHandlerTest {
                 () -> assertEquals(nodeId, node.getId()),
                 () -> assertIterableEquals(nodeIds, node.getNodeIds()),
                 () -> assertEquals(2, node.getNodeIds().size()),
-                () -> assertEquals(MessageTypes.RAFT_INIT_OK, response.getBody().get("type")),
-                () -> assertEquals(msgId, response.getBody().get("in_reply_to")),
+                () -> assertEquals(MessageTypes.RAFT_INIT_OK, response.getBody().get(MessageFields.BODY_MSG_TYPE)),
+                () -> assertEquals(msgId, response.getBody().get(MessageFields.BODY_MSG_IN_REPLY_TO)),
                 () -> assertEquals(NodeState.FOLLOWER, node.getNodeState()),
                 () -> assertEquals(response.getDest(), message.getDest()),
-                () -> assertEquals(nodeId, response.getSrc())
+                () -> assertEquals(nodeId, response.getSrc()),
+                () -> assertTrue(node.isInitialized())
         );
     }
 
     private MaelstromMessage buildMessage(String nodeId, List<String> nodeIds, Integer msgId) {
         Map<String, Object> body = new HashMap<>();
-        body.put("type", MessageTypes.RAFT_INIT);
-        body.put(MessageKeys.NODE_ID_KEY, nodeId);
-        body.put(MessageKeys.NODE_IDS_KEY, nodeIds);
-        body.put(MessageKeys.MSG_ID_KEY, msgId);
-        return new MaelstromMessage("src", nodeId, body);
+        body.put(MessageFields.BODY_MSG_TYPE, MessageTypes.RAFT_INIT);
+        body.put(MessageFields.BODY_MSG_RAFT_INIT_NODE_ID, nodeId);
+        body.put(MessageFields.BODY_MSG_RAFT_INIT_NODE_IDS, nodeIds);
+        body.put(MessageFields.BODY_MSG_ID, msgId);
+        return new MaelstromMessage(MessageFields.SRC, nodeId, body);
     }
 
     private MessageDispatcher buildMessageDispatcher(Node node) {

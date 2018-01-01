@@ -1,4 +1,4 @@
-package com.github.igorperikov.jraft.persistent;
+package com.github.igorperikov.jraft.persistence;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,9 +15,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class FileBasedPersistentService implements PersistentService {
+public class FileBasedPersistenceService implements PersistenceService {
     private static final String JRAFT_STORAGE_PREFIX_NAME = "jraft";
 
     private static final String CURRENT_TERM_FILE_NAME = "term";
@@ -137,13 +138,20 @@ public class FileBasedPersistentService implements PersistentService {
         }
     }
 
-    // TODO: for tests only
-    public List<Path> pathsToFiles() {
-        return Lists.newArrayList(
+    @Override
+    public void destroy() {
+        Stream.of(
                 buildFilePath(CURRENT_TERM_FILE_NAME),
                 buildFilePath(VOTED_FOR_FILE_NAME),
                 buildFilePath(LOG_ENTRIES_FILE_NAME)
-        );
+        ).filter(Files::exists)
+                .forEach(path -> {
+                    try {
+                        Files.delete(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     /**
