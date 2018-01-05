@@ -2,7 +2,7 @@ package com.github.igorperikov.jraft.service.client;
 
 import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.NodeState;
-import com.github.igorperikov.jraft.domain.LogEntry;
+import com.github.igorperikov.jraft.domain.Command;
 import com.github.igorperikov.jraft.persistence.PersistenceService;
 import com.github.igorperikov.jraft.service.MessageErrorCodes;
 import com.github.igorperikov.jraft.service.MessageFields;
@@ -11,9 +11,6 @@ import com.github.igorperikov.jraft.service.infrastructure.MaelstromMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -32,25 +29,21 @@ public class ReadMessageHandler extends ClientMessageHandler {
         log.info("Got message {}", request);
         if (node.getNodeState() == NodeState.LEADER) {
             String key = (String) request.getBody().get(MessageFields.BODY_MSG_CLIENT_KEY);
-            List<LogEntry> log = persistenceService.getLog();
-            Collections.reverse(log);
-            return log.stream()
-                    .filter(entry -> entry.getCommand().getKey().equals(key))
-                    .findFirst()
-                    .map(logEntry -> buildOkResponse(request, logEntry))
+            return persistenceService.getLastKnownCommand(key)
+                    .map(command -> buildOkResponse(request, command))
                     .orElseGet(() -> buildKeyDoesNotExistResponse(request));
         } else {
             return buildDenyResponse(request);
         }
     }
 
-    private MaelstromMessage buildOkResponse(MaelstromMessage request, LogEntry logEntry) {
+    private MaelstromMessage buildOkResponse(MaelstromMessage request, Command command) {
         return MaelstromMessage.of(
                 request.getSrc(),
                 request.getDest(),
                 MessageFields.BODY_MSG_TYPE, MessageTypes.READ_OK,
                 MessageFields.BODY_MSG_IN_REPLY_TO, request.getBody().get(MessageFields.BODY_MSG_ID),
-                MessageFields.BODY_MSG_CLIENT_READ_VALUE, logEntry.getCommand().getValue()
+                MessageFields.BODY_MSG_CLIENT_READ_VALUE, command.getValue()
         );
     }
 

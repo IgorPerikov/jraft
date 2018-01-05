@@ -1,9 +1,11 @@
 package com.github.igorperikov.jraft.persistence;
 
+import com.github.igorperikov.jraft.domain.Command;
 import com.github.igorperikov.jraft.domain.LogEntry;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 
 public interface PersistenceService {
     // latest term server has seen(init to 0 on first boot, inc monotonically)
@@ -18,6 +20,8 @@ public interface PersistenceService {
     @Nonnull
     List<LogEntry> getLog();
     void appendEntry(LogEntry entry);
+
+    Optional<Command> getLastKnownCommand(String key);
 
     void destroy();
 }

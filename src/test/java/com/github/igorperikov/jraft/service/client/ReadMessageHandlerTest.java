@@ -38,6 +38,7 @@ class ReadMessageHandlerTest {
         LogEntry logEntry3 = new LogEntry(new Command(existingKey, lastKnownValue), 0);
         List<LogEntry> mockedLog = Lists.newArrayList(logEntry1, logEntry2, logEntry3);
         Mockito.when(persistenceService.getLog()).thenReturn(mockedLog);
+        Mockito.when(persistenceService.getLastKnownCommand(Mockito.any())).thenCallRealMethod();
 
         handler = new ReadMessageHandler(node, persistenceService);
     }

@@ -2,6 +2,7 @@ package com.github.igorperikov.jraft.persistence;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.igorperikov.jraft.domain.Command;
 import com.github.igorperikov.jraft.domain.LogEntry;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
@@ -136,6 +138,16 @@ public class FileBasedPersistenceService implements PersistenceService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Optional<Command> getLastKnownCommand(String key) {
+        List<LogEntry> log = getLog();
+        Collections.reverse(log);
+        return log.stream()
+                .filter(entry -> entry.getCommand().getKey().equals(key))
+                .findFirst()
+                .map(LogEntry::getCommand);
     }
 
     @Override
