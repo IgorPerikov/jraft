@@ -46,4 +46,6 @@ dependencies {
     compile "org.junit.jupiter:junit-jupiter-engine:${junit5Version}"
 
     compileOnly "org.projectlombok:lombok"
+
+    testCompile "org.mockito:mockito-core"
 }

@@ -2,18 +2,20 @@ package com.github.igorperikov.jraft.service;
 
 import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.NodeState;
+import com.github.igorperikov.jraft.persistence.FileBasedPersistenceService;
 import com.github.igorperikov.jraft.service.client.CasMessageHandler;
 import com.github.igorperikov.jraft.service.client.DeleteMessageHandler;
 import com.github.igorperikov.jraft.service.client.ReadMessageHandler;
 import com.github.igorperikov.jraft.service.client.WriteMessageHandler;
+import com.github.igorperikov.jraft.service.consensus.AppendEntriesHandler;
+import com.github.igorperikov.jraft.service.consensus.RequestVoteHandler;
 import com.github.igorperikov.jraft.service.infrastructure.MaelstromMessage;
 import com.github.igorperikov.jraft.service.infrastructure.MessageDispatcher;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,21 +45,25 @@ class RaftInitHandlerTest {
     }
 
     private MaelstromMessage buildMessage(String nodeId, List<String> nodeIds, Integer msgId) {
-        Map<String, Object> body = new HashMap<>();
-        body.put(MessageFields.BODY_MSG_TYPE, MessageTypes.RAFT_INIT);
-        body.put(MessageFields.BODY_MSG_RAFT_INIT_NODE_ID, nodeId);
-        body.put(MessageFields.BODY_MSG_RAFT_INIT_NODE_IDS, nodeIds);
-        body.put(MessageFields.BODY_MSG_ID, msgId);
-        return new MaelstromMessage(MessageFields.SRC, nodeId, body);
+        return MaelstromMessage.of(
+                MessageFields.SRC,
+                nodeId,
+                MessageFields.BODY_MSG_TYPE, MessageTypes.RAFT_INIT,
+                MessageFields.BODY_MSG_RAFT_INIT_NODE_ID, nodeId,
+                MessageFields.BODY_MSG_RAFT_INIT_NODE_IDS, nodeIds,
+                MessageFields.BODY_MSG_ID, msgId
+        );
     }
 
     private MessageDispatcher buildMessageDispatcher(Node node) {
         return new MessageDispatcher(
                 new RaftInitHandler(node),
                 new WriteMessageHandler(node),
-                new ReadMessageHandler(node),
+                new ReadMessageHandler(node, Mockito.mock(FileBasedPersistenceService.class)),
                 new CasMessageHandler(node),
-                new DeleteMessageHandler(node)
+                new DeleteMessageHandler(node),
+                new AppendEntriesHandler(node),
+                new RequestVoteHandler(node)
         );
     }
 }

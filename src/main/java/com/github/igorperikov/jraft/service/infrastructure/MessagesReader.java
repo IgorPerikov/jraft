@@ -48,8 +48,8 @@ public class MessagesReader {
                         }
                     }
                 },
-                50,
-                50,
+                25,
+                25,
                 TimeUnit.MILLISECONDS
         );
     }

@@ -6,9 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @Slf4j
@@ -32,10 +30,11 @@ public class RaftInitHandler implements MessageHandler {
         node.addNodeIds(nodeIds);
 
         node.setInitialized(true);
-
-        Map<String, Object> body = new HashMap<>();
-        body.put(MessageFields.BODY_MSG_TYPE, MessageTypes.RAFT_INIT_OK);
-        body.put(MessageFields.BODY_MSG_IN_REPLY_TO, request.getBody().get(MessageFields.BODY_MSG_ID));
-        return new MaelstromMessage(nodeId, request.getDest(), body);
+        return MaelstromMessage.of(
+                nodeId,
+                request.getDest(),
+                MessageFields.BODY_MSG_TYPE, MessageTypes.RAFT_INIT_OK,
+                MessageFields.BODY_MSG_IN_REPLY_TO, request.getBody().get(MessageFields.BODY_MSG_ID)
+        );
     }
 }
