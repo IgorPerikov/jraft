@@ -4,7 +4,7 @@ import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.NodeState;
 import com.github.igorperikov.jraft.domain.Command;
 import com.github.igorperikov.jraft.domain.LogEntry;
-import com.github.igorperikov.jraft.persistence.FileBasedPersistenceService;
+import com.github.igorperikov.jraft.persistence.PersistenceRepository;
 import com.github.igorperikov.jraft.persistence.PersistenceService;
 import com.github.igorperikov.jraft.service.MessageErrorCodes;
 import com.github.igorperikov.jraft.service.MessageFields;
@@ -32,13 +32,14 @@ class ReadMessageHandlerTest {
         Node node = Mockito.mock(Node.class);
         Mockito.when(node.getNodeState()).thenReturn(NodeState.LEADER);
 
-        PersistenceService persistenceService = Mockito.mock(FileBasedPersistenceService.class);
+        PersistenceRepository persistenceRepository = Mockito.mock(PersistenceRepository.class);
         LogEntry logEntry1 = new LogEntry(new Command(existingKey, "42"), 0);
         LogEntry logEntry2 = new LogEntry(new Command(existingKey, "42"), 0);
         LogEntry logEntry3 = new LogEntry(new Command(existingKey, lastKnownValue), 0);
         List<LogEntry> mockedLog = Lists.newArrayList(logEntry1, logEntry2, logEntry3);
-        Mockito.when(persistenceService.getLog()).thenReturn(mockedLog);
-        Mockito.when(persistenceService.getLastKnownCommand(Mockito.any())).thenCallRealMethod();
+        Mockito.when(persistenceRepository.getLog()).thenReturn(mockedLog);
+
+        PersistenceService persistenceService = new PersistenceService(persistenceRepository);
 
         handler = new ReadMessageHandler(node, persistenceService);
     }

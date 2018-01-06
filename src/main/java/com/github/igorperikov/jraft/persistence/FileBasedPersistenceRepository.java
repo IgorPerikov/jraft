@@ -2,7 +2,6 @@ package com.github.igorperikov.jraft.persistence;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.igorperikov.jraft.domain.Command;
 import com.github.igorperikov.jraft.domain.LogEntry;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -16,11 +15,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class FileBasedPersistenceService implements PersistenceService {
+public class FileBasedPersistenceRepository implements PersistenceRepository {
     private static final String JRAFT_STORAGE_PREFIX_NAME = "jraft";
 
     private static final String CURRENT_TERM_FILE_NAME = "term";
@@ -110,7 +108,8 @@ public class FileBasedPersistenceService implements PersistenceService {
         File file = filePath.toFile();
         try {
             if (file.exists()) {
-                return objectMapper.readValue(filePath.toFile(), new TypeReference<List<LogEntry>>(){});
+                return objectMapper.readValue(filePath.toFile(), new TypeReference<List<LogEntry>>() {
+                });
             } else {
                 writeToFile(filePath, objectMapper.writeValueAsString(DEFAULT_LOG));
                 return DEFAULT_LOG;
@@ -127,7 +126,8 @@ public class FileBasedPersistenceService implements PersistenceService {
             List<LogEntry> list;
             File resultFile = filePath.toFile();
             if (Files.exists(filePath)) {
-                list = objectMapper.readValue(resultFile, new TypeReference<List<LogEntry>>(){});
+                list = objectMapper.readValue(resultFile, new TypeReference<List<LogEntry>>() {
+                });
                 list.add(entry);
                 Files.delete(filePath);
             } else {
@@ -138,16 +138,6 @@ public class FileBasedPersistenceService implements PersistenceService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public Optional<Command> getLastKnownCommand(String key) {
-        List<LogEntry> log = getLog();
-        Collections.reverse(log);
-        return log.stream()
-                .filter(entry -> entry.getCommand().getKey().equals(key))
-                .findFirst()
-                .map(LogEntry::getCommand);
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.github.igorperikov.jraft.service;
 
 import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.NodeState;
-import com.github.igorperikov.jraft.persistence.FileBasedPersistenceService;
+import com.github.igorperikov.jraft.persistence.PersistenceService;
 import com.github.igorperikov.jraft.service.client.CasMessageHandler;
 import com.github.igorperikov.jraft.service.client.DeleteMessageHandler;
 import com.github.igorperikov.jraft.service.client.ReadMessageHandler;
@@ -59,7 +59,7 @@ class RaftInitHandlerTest {
         return new MessageDispatcher(
                 new RaftInitHandler(node),
                 new WriteMessageHandler(node),
-                new ReadMessageHandler(node, Mockito.mock(FileBasedPersistenceService.class)),
+                new ReadMessageHandler(node, Mockito.mock(PersistenceService.class)),
                 new CasMessageHandler(node),
                 new DeleteMessageHandler(node),
                 new AppendEntriesHandler(node),

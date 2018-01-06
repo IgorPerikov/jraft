@@ -2,26 +2,28 @@ package com.github.igorperikov.jraft.persistence;
 
 import com.github.igorperikov.jraft.domain.Command;
 import com.github.igorperikov.jraft.domain.LogEntry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public interface PersistenceService {
-    // latest term server has seen(init to 0 on first boot, inc monotonically)
-    int getCurrentTerm();
-    void setCurrentTerm(int currentTerm);
+@Service
+public class PersistenceService {
+    private final PersistenceRepository persistenceRepository;
 
-    // candidateId that received vote in currentTerm(or null if none)
-    String getVotedFor();
-    void setVotedFor(String votedFor);
+    @Autowired
+    public PersistenceService(PersistenceRepository persistenceRepository) {
+        this.persistenceRepository = persistenceRepository;
+    }
 
-    // log entries, each entry contains command for state machine, and term when entry was received by leader(first index is 1)
-    @Nonnull
-    List<LogEntry> getLog();
-    void appendEntry(LogEntry entry);
-
-    Optional<Command> getLastKnownCommand(String key);
-
-    void destroy();
+    public Optional<Command> getLastKnownCommand(String key) {
+        List<LogEntry> log = persistenceRepository.getLog();
+        Collections.reverse(log);
+        return log.stream()
+                .filter(entry -> entry.getCommand().getKey().equals(key))
+                .findFirst()
+                .map(LogEntry::getCommand);
+    }
 }

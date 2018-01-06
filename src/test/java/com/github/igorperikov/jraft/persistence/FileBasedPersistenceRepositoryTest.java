@@ -10,24 +10,24 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileBasedPersistenceServiceTest {
+class FileBasedPersistenceRepositoryTest {
     private static final String NODE_ID = "node_id";
 
-    private PersistenceService persistenceService;
+    private PersistenceRepository persistenceRepository;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setupInitialState() {
-        persistenceService = new FileBasedPersistenceService(NODE_ID, objectMapper);
+        persistenceRepository = new FileBasedPersistenceRepository(NODE_ID, objectMapper);
         deleteFiles();
     }
 
     @Test
     void persistentStateShouldBeInitialisedWithDefaultValues() {
         assertAll(
-                () -> assertEquals(0, persistenceService.getCurrentTerm()),
-                () -> assertEquals("", persistenceService.getVotedFor()),
-                () -> assertEquals(0, persistenceService.getLog().size())
+                () -> assertEquals(0, persistenceRepository.getCurrentTerm()),
+                () -> assertEquals("", persistenceRepository.getVotedFor()),
+                () -> assertEquals(0, persistenceRepository.getLog().size())
         );
     }
 
@@ -37,18 +37,18 @@ class FileBasedPersistenceServiceTest {
         String votedFor = "some-other-node";
         LogEntry entry = new LogEntry(new Command("x", "10"), 1);
 
-        persistenceService.setCurrentTerm(currentTerm);
-        persistenceService.setVotedFor(votedFor);
-        persistenceService.appendEntry(entry);
+        persistenceRepository.setCurrentTerm(currentTerm);
+        persistenceRepository.setVotedFor(votedFor);
+        persistenceRepository.appendEntry(entry);
 
         // imitate jvm restart
-        PersistenceService newPersistenceService = new FileBasedPersistenceService(NODE_ID, objectMapper);
+        PersistenceRepository newPersistenceRepository = new FileBasedPersistenceRepository(NODE_ID, objectMapper);
 
         assertAll(
-                () -> assertEquals(currentTerm, newPersistenceService.getCurrentTerm()),
-                () -> assertEquals(votedFor, newPersistenceService.getVotedFor()),
-                () -> assertEquals(1, newPersistenceService.getLog().size()),
-                () -> assertEquals(entry, newPersistenceService.getLog().iterator().next())
+                () -> assertEquals(currentTerm, newPersistenceRepository.getCurrentTerm()),
+                () -> assertEquals(votedFor, newPersistenceRepository.getVotedFor()),
+                () -> assertEquals(1, newPersistenceRepository.getLog().size()),
+                () -> assertEquals(entry, newPersistenceRepository.getLog().iterator().next())
         );
     }
 
@@ -58,6 +58,6 @@ class FileBasedPersistenceServiceTest {
     }
 
     private void deleteFiles() {
-        persistenceService.destroy();
+        persistenceRepository.destroy();
     }
 }
