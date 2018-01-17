@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class Node {
     // index of highest log entry applied to state machine (initialized to 0, increases monotonically)
     private int lastApplied;
 
-    private volatile NodeState nodeState = NodeState.FOLLOWER;
+    private volatile NodeState nodeState;
 
     // this section for leaders only, reinitialized after election
     // for each server, index of the next log entry to send to that server(initialized to leader last log index + 1)
@@ -31,7 +32,13 @@ public class Node {
 
     private boolean isInitialized = false;
 
+    private final AtomicInteger messageId = new AtomicInteger();
+
     public void addNodeIds(List<String> nodeIds) {
         this.nodeIds.addAll(nodeIds);
+    }
+
+    public int getNextMessageId() {
+        return messageId.incrementAndGet();
     }
 }

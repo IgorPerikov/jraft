@@ -2,8 +2,8 @@ package com.github.igorperikov.jraft.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.igorperikov.jraft.Node;
-import com.github.igorperikov.jraft.persistence.FileBasedPersistenceRepository;
-import com.github.igorperikov.jraft.persistence.PersistenceRepository;
+import com.github.igorperikov.jraft.log.FileBasedLogRepository;
+import com.github.igorperikov.jraft.log.LogRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +15,7 @@ public class AppConfiguration {
     }
 
     @Bean
-    public PersistenceRepository persistenceRepository(Node node, ObjectMapper objectMapper) {
-        return new FileBasedPersistenceRepository(node.getId(), objectMapper);
+    public LogRepository persistenceRepository(Node node, ObjectMapper objectMapper) {
+        return new FileBasedLogRepository(node.getId(), objectMapper);
     }
 }
