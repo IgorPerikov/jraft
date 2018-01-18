@@ -2,6 +2,7 @@ package com.github.igorperikov.jraft.consensus;
 
 import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.NodeState;
+import com.github.igorperikov.jraft.consensus.rpc.RequestVoteSender;
 import com.github.igorperikov.jraft.handler.RaftInitHandler;
 import com.github.igorperikov.jraft.handler.client.CasMessageHandler;
 import com.github.igorperikov.jraft.handler.client.DeleteMessageHandler;
@@ -13,6 +14,7 @@ import com.github.igorperikov.jraft.infrastructure.MaelstromMessage;
 import com.github.igorperikov.jraft.infrastructure.MessageDispatcher;
 import com.github.igorperikov.jraft.infrastructure.constants.MessageFields;
 import com.github.igorperikov.jraft.infrastructure.constants.MessageTypes;
+import com.github.igorperikov.jraft.log.LogRepository;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,7 +49,13 @@ class RaftInitInitHandlerTest {
     }
 
     MessageDispatcher buildMessageDispatcher(Node node) {
-        ElectionService electionService = new ElectionService(node, 50, 100);
+        ElectionService electionService = new ElectionService(
+                node,
+                Mockito.mock(RequestVoteSender.class),
+                Mockito.mock(LogRepository.class),
+                50,
+                100
+        );
         return new MessageDispatcher(
                 new RaftInitHandler(node, electionService),
                 new WriteMessageHandler(node),
