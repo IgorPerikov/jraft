@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -75,13 +76,15 @@ class CandidateConversionTest {
 
     @Test
     void should_not_convert_to_candidate_state_on_correct_heartbeats() throws InterruptedException {
-        Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(
                 () -> electionService.receiveHeartbeat(),
                 electionTimeout / 4,
                 electionTimeout / 4,
                 TimeUnit.MILLISECONDS
         );
         TimeUnit.MILLISECONDS.sleep((long) (electionTimeout * 1.5));
+        executor.shutdownNow();
 
         assertAll(
                 () -> assertEquals(node.getNodeState(), NodeState.FOLLOWER),

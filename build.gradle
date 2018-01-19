@@ -30,6 +30,9 @@ ext {
     jacksonVersion = '2.9.2'
     guavaVersion = '23.0'
     junit5Version = '5.0.2'
+    junitVintageVersion = '4.12.3'
+    aerospikeVersion = '4.1.2'
+    testcontainersVersion = '1.5.1'
 }
 
 dependencies {
@@ -44,6 +47,12 @@ dependencies {
 
     compile "org.junit.jupiter:junit-jupiter-api:${junit5Version}"
     compile "org.junit.jupiter:junit-jupiter-engine:${junit5Version}"
+
+    compile "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
+
+    compile "org.testcontainers:testcontainers:${testcontainersVersion}"
+
+    compile "com.aerospike:aerospike-client:${aerospikeVersion}"
 
     compileOnly "org.projectlombok:lombok"
 

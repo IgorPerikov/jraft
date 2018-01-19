@@ -8,17 +8,17 @@ import java.util.List;
  * we dont need realy persistent storage for testing purposes
  */
 public class InMemoryLogRepository implements LogRepository {
-    private int currentTerm = 0;
+    private long currentTerm = 0;
     private String votedFor = "";
     private List<LogEntry> log = new ArrayList<>();
 
     @Override
-    public int getCurrentTerm() {
+    public long getCurrentTerm() {
         return currentTerm;
     }
 
     @Override
-    public void setCurrentTerm(int currentTerm) {
+    public void setCurrentTerm(long currentTerm) {
         this.currentTerm = currentTerm;
     }
 

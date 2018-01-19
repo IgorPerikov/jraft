@@ -1,8 +1,9 @@
 package com.github.igorperikov.jraft.config;
 
+import com.aerospike.client.AerospikeClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.igorperikov.jraft.Node;
-import com.github.igorperikov.jraft.log.FileBasedLogRepository;
+import com.github.igorperikov.jraft.log.AerospikeLogRepository;
 import com.github.igorperikov.jraft.log.LogRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,12 @@ public class AppConfiguration {
     }
 
     @Bean
-    public LogRepository persistenceRepository(Node node, ObjectMapper objectMapper) {
-        return new FileBasedLogRepository(node.getId(), objectMapper);
+    public LogRepository persistenceRepository(AerospikeClient aerospikeClient, Node node) {
+        return new AerospikeLogRepository(aerospikeClient, node.getId());
+    }
+
+    @Bean(destroyMethod = "close")
+    public AerospikeClient aerospikeClient() {
+        return new AerospikeClient("127.0.0.1", 3000);
     }
 }

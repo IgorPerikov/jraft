@@ -66,8 +66,8 @@ public class ElectionService {
         log.info("Converting to candidate");
         stopListeningForHeartbeats();
         node.setNodeState(NodeState.CANDIDATE);
-        int currentTerm = logRepository.getCurrentTerm();
-        int nextTerm = currentTerm + 1;
+        long currentTerm = logRepository.getCurrentTerm();
+        long nextTerm = currentTerm + 1;
         log.info("Previous term={}, next term={}", currentTerm, nextTerm);
         logRepository.setCurrentTerm(nextTerm);
         voteForYourself();

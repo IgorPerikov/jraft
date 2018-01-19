@@ -1,8 +1,8 @@
-package com.github.igorperikov.jraft.service.consensus;
+package com.github.igorperikov.jraft.handler.consensus;
 
 import com.github.igorperikov.jraft.Node;
-import com.github.igorperikov.jraft.service.MessageHandler;
-import com.github.igorperikov.jraft.service.infrastructure.MaelstromMessage;
+import com.github.igorperikov.jraft.handler.MessageHandler;
+import com.github.igorperikov.jraft.infrastructure.MaelstromMessage;
 import org.springframework.stereotype.Component;
 
 @Component

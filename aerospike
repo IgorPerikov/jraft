@@ -1,0 +1,1 @@
+docker run -d --name aerospike -p 3000:3000 aerospike/aerospike-server:3.15.1.4

@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface LogRepository {
     // latest term server has seen(init to 0 on first boot, inc monotonically)
-    int getCurrentTerm();
+    long getCurrentTerm();
 
-    void setCurrentTerm(int currentTerm);
+    void setCurrentTerm(long currentTerm);
 
     // candidateId that received vote in currentTerm(or null if none)
     String getVotedFor();
@@ -19,6 +19,4 @@ public interface LogRepository {
     List<LogEntry> getLog();
 
     void appendEntry(LogEntry entry);
-
-    void destroy();
 }
