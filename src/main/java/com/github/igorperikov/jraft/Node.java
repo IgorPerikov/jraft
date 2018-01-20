@@ -22,6 +22,7 @@ public class Node {
 
     private volatile NodeState nodeState;
 
+    // TODO: move leader section away from here?
     // this section for leaders only, reinitialized after election
     // for each server, index of the next log entry to send to that server(initialized to leader last log index + 1)
     private Map<String, Integer> nextIndexes = new HashMap<>();

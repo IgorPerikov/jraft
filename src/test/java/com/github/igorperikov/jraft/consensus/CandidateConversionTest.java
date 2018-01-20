@@ -1,5 +1,6 @@
 package com.github.igorperikov.jraft.consensus;
 
+import com.github.igorperikov.jraft.ExecutorUtility;
 import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.NodeState;
 import com.github.igorperikov.jraft.consensus.rpc.RequestVoteSender;
@@ -78,7 +79,7 @@ class CandidateConversionTest {
     void should_not_convert_to_candidate_state_on_correct_heartbeats() throws InterruptedException {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleWithFixedDelay(
-                () -> electionService.receiveHeartbeat(),
+                () -> ExecutorUtility.runWithExceptions(() -> electionService.receiveHeartbeat()),
                 electionTimeout / 4,
                 electionTimeout / 4,
                 TimeUnit.MILLISECONDS

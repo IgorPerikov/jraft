@@ -1,6 +1,7 @@
 package com.github.igorperikov.jraft.infrastructure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.igorperikov.jraft.ExecutorUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +39,7 @@ public class MessagesReader {
     @PostConstruct
     private void start() {
         readExecutor.scheduleWithFixedDelay(
-                () -> {
+                () -> ExecutorUtility.runWithExceptions(() -> {
                     if (scanner.hasNext()) {
                         String jsonMessage = scanner.nextLine();
                         try {
@@ -47,7 +48,7 @@ public class MessagesReader {
                             log.error("", e);
                         }
                     }
-                },
+                }),
                 10,
                 10,
                 TimeUnit.MILLISECONDS
@@ -58,7 +59,9 @@ public class MessagesReader {
         MaelstromMessage maelstromMessage = objectMapper.readValue(jsonMessage, MaelstromMessage.class);
         messageValidator.validate(maelstromMessage);
         MaelstromMessage response = messageDispatcher.dispatchMessage(maelstromMessage);
-        messageWriter.write(response);
+        if (response != null) {
+            messageWriter.write(response);
+        }
     }
 
     @PreDestroy

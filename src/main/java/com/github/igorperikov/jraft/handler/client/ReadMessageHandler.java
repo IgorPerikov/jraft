@@ -32,7 +32,7 @@ public class ReadMessageHandler extends ClientMessageHandler {
                     .map(value -> buildOkResponse(request, value))
                     .orElseGet(() -> buildKeyDoesNotExistResponse(request));
         } else {
-            return buildDenyResponse(request);
+            return buildDenyResponse(request, node.getNextMessageId());
         }
     }
 
@@ -40,7 +40,8 @@ public class ReadMessageHandler extends ClientMessageHandler {
         return MaelstromMessage.of(
                 request.getSrc(),
                 request.getDest(),
-                MessageFields.BODY_MSG_TYPE, MessageTypes.READ_OK,
+                MessageTypes.READ_OK,
+                node.getNextMessageId(),
                 MessageFields.BODY_MSG_IN_REPLY_TO, request.getBody().get(MessageFields.BODY_MSG_ID),
                 MessageFields.BODY_MSG_CLIENT_READ_VALUE, value
         );
@@ -50,7 +51,8 @@ public class ReadMessageHandler extends ClientMessageHandler {
         return MaelstromMessage.of(
                 request.getSrc(),
                 request.getDest(),
-                MessageFields.BODY_MSG_TYPE, MessageTypes.ERROR,
+                MessageTypes.ERROR,
+                node.getNextMessageId(),
                 MessageFields.BODY_MSG_IN_REPLY_TO, request.getBody().get(MessageFields.BODY_MSG_ID),
                 MessageFields.BODY_MSG_ERROR_CODE, MessageErrorCodes.KEY_DOESNT_EXIST
         );

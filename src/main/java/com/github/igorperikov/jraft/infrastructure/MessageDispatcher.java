@@ -12,6 +12,8 @@ import com.github.igorperikov.jraft.infrastructure.constants.MessageTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 @Component
 public class MessageDispatcher {
     private final RaftInitHandler raftInitHandler;
@@ -41,6 +43,7 @@ public class MessageDispatcher {
         this.requestVoteHandler = requestVoteHandler;
     }
 
+    @Nullable
     public MaelstromMessage dispatchMessage(MaelstromMessage message) {
         // TODO: casting
         String type = (String) message.getBody().get(MessageFields.BODY_MSG_TYPE);
@@ -48,17 +51,23 @@ public class MessageDispatcher {
             case MessageTypes.RAFT_INIT:
                 return raftInitHandler.handle(message);
             case MessageTypes.WRITE:
-                return writeMessageHandler.handle(message);
+                writeMessageHandler.handle(message);
+                return null;
             case MessageTypes.READ:
-                return readMessageHandler.handle(message);
+                readMessageHandler.handle(message);
+                return null;
             case MessageTypes.CAS:
-                return casMessageHandler.handle(message);
+                casMessageHandler.handle(message);
+                return null;
             case MessageTypes.DELETE:
-                return deleteMessageHandler.handle(message);
+                deleteMessageHandler.handle(message);
+                return null;
             case MessageTypes.APPEND_ENTRIES_RPC:
-                return appendEntriesHandler.handle(message);
+                appendEntriesHandler.handle(message);
+                return null;
             case MessageTypes.REQUEST_VOTE_RPC:
-                return requestVoteHandler.handle(message);
+                requestVoteHandler.handle(message);
+                return null;
             default:
                 throw new RuntimeException("'" + type + "' type is not supported");
         }

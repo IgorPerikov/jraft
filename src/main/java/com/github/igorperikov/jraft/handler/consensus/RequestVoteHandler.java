@@ -3,8 +3,10 @@ package com.github.igorperikov.jraft.handler.consensus;
 import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.handler.MessageHandler;
 import com.github.igorperikov.jraft.infrastructure.MaelstromMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class RequestVoteHandler implements MessageHandler {
     private final Node node;
@@ -15,6 +17,7 @@ public class RequestVoteHandler implements MessageHandler {
 
     @Override
     public MaelstromMessage handle(MaelstromMessage maelstromMessage) {
+        log.info("Request vote obtained={}", maelstromMessage);
         return null;
     }
 }

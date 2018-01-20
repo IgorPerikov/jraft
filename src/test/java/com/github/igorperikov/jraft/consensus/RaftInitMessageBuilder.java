@@ -12,10 +12,10 @@ class RaftInitMessageBuilder {
         return MaelstromMessage.of(
                 MessageFields.SRC,
                 nodeId,
-                MessageFields.BODY_MSG_TYPE, MessageTypes.RAFT_INIT,
+                MessageTypes.RAFT_INIT,
+                msgId,
                 MessageFields.BODY_MSG_RAFT_INIT_NODE_ID, nodeId,
-                MessageFields.BODY_MSG_RAFT_INIT_NODE_IDS, nodeIds,
-                MessageFields.BODY_MSG_ID, msgId
+                MessageFields.BODY_MSG_RAFT_INIT_NODE_IDS, nodeIds
         );
     }
 }

@@ -1,18 +1,23 @@
 package com.github.igorperikov.jraft.consensus;
 
+import com.github.igorperikov.jraft.ExecutorUtility;
 import com.github.igorperikov.jraft.Node;
 import com.github.igorperikov.jraft.NodeState;
 import com.github.igorperikov.jraft.consensus.rpc.RequestVoteSender;
 import com.github.igorperikov.jraft.log.LogRepository;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+// TODO: split service on smaller ones
 @Service
 @Slf4j
 public class ElectionService {
@@ -27,7 +32,10 @@ public class ElectionService {
 
     private volatile boolean heartbeatAcquired = false;
 
-    private ScheduledExecutorService heartbeatExecutor;
+    private LeaderElectionStatus leaderElectionStatus;
+
+    private ScheduledExecutorService heartbeatListenerExecutor;
+    private ScheduledExecutorService requestVoteSenderExecutor;
 
     public ElectionService(
             Node node,
@@ -60,33 +68,53 @@ public class ElectionService {
         log.info("Converting to follower");
         node.setNodeState(NodeState.FOLLOWER);
         startListenForHeartbeats();
+        // TODO:
     }
 
     private void convertToCandidate() {
-        log.info("Converting to candidate");
-        stopListeningForHeartbeats();
-        node.setNodeState(NodeState.CANDIDATE);
-        long currentTerm = logRepository.getCurrentTerm();
-        long nextTerm = currentTerm + 1;
-        log.info("Previous term={}, next term={}", currentTerm, nextTerm);
+        long nextTerm = logRepository.getCurrentTerm() + 1;
+        log.info("Setting term={}", nextTerm);
         logRepository.setCurrentTerm(nextTerm);
-        voteForYourself();
+        node.setNodeState(NodeState.CANDIDATE);
+        logRepository.setVotedFor(node.getId());
+        leaderElectionStatus = new LeaderElectionStatus(node);
         startSendingRequestVotes();
-        log.info("conversion completed");
+        launchElectionTimeoutClock();
+        log.info("Conversion to candidate state completed");
+    }
+
+    private void launchElectionTimeoutClock() {
+        // TODO: next election happens in election-timeout-clock thread, but it shouldn't
+        Executors.newSingleThreadScheduledExecutor(
+                new ThreadFactoryBuilder().setNameFormat("election-timeout-clock").build()
+        ).schedule(
+                this::initiateNewVote,
+                maxElectionTimeout, // TODO:
+                TimeUnit.MILLISECONDS
+        );
+    }
+
+    // TODO: incorrect name, split or merge with convertToCandidate()
+    private void initiateNewVote() {
+        log.info("Node hasn't won the election, initiate a new one");
+        stopSendingRequestVotes();
+        convertToCandidate();
     }
 
     public void convertToLeader() {
         log.info("Converting to leader");
         node.setNodeState(NodeState.LEADER);
+        // TODO:
     }
 
     private void startListenForHeartbeats() {
-        // TODO: launch executor loop
-        heartbeatExecutor = Executors.newSingleThreadScheduledExecutor();
+        heartbeatListenerExecutor = Executors.newSingleThreadScheduledExecutor(
+                new ThreadFactoryBuilder().setNameFormat("heartbeat-listener").build()
+        );
         int electionTimeout = calculateElectionTimeout();
         log.info("Start listening for heartbeats with election timeout={}", electionTimeout);
-        heartbeatExecutor.scheduleWithFixedDelay(
-                this::verifyHeartbeat,
+        heartbeatListenerExecutor.scheduleWithFixedDelay(
+                () -> ExecutorUtility.runWithExceptions(this::verifyHeartbeat),
                 electionTimeout,
                 electionTimeout,
                 TimeUnit.MILLISECONDS
@@ -105,7 +133,7 @@ public class ElectionService {
     }
 
     private void stopListeningForHeartbeats() {
-        heartbeatExecutor.shutdownNow();
+        heartbeatListenerExecutor.shutdownNow();
     }
 
     private int calculateElectionTimeout() {
@@ -114,11 +142,55 @@ public class ElectionService {
 
     private void startSendingRequestVotes() {
         log.info("Start sending request votes to other nodes");
-        // TODO:
+        requestVoteSenderExecutor = Executors.newSingleThreadScheduledExecutor(
+                new ThreadFactoryBuilder().setNameFormat("request-vote-sender").build()
+        );
+        requestVoteSenderExecutor.scheduleWithFixedDelay(
+                () -> ExecutorUtility.runWithExceptions(() -> {
+                    Set<String> nodes = leaderElectionStatus.getNodesWhoHasntVotedYet();
+                    log.info("Acquiring nodes, who hasn't voted yet={}", nodes);
+                    for (String nodeId : nodes) {
+                        requestVoteSender.sendRequestVote(nodeId);
+                    }
+                }),
+                0,
+                200, // TODO: specify delay
+                TimeUnit.MILLISECONDS
+        );
     }
 
-    private void voteForYourself() {
-        log.info("Granting vote to yourself");
-        // TODO:
+    private void stopSendingRequestVotes() {
+        requestVoteSenderExecutor.shutdownNow();
+    }
+
+    private static class LeaderElectionStatus {
+        final int quorum;
+        final Set<String> all = new HashSet<>();
+        final Set<String> rejected = new HashSet<>();
+        final Set<String> acquiredVotes = new HashSet<>();
+
+        LeaderElectionStatus(Node node) {
+            quorum = (int) Math.floor(node.getNodeIds().size() / (double) 2) + 1;
+            all.addAll(node.getNodeIds());
+            provideVote(node.getId());
+        }
+
+        void provideVote(String nodeId) {
+            acquiredVotes.add(nodeId);
+        }
+
+        void rejectVote(String nodeId) {
+            rejected.add(nodeId);
+        }
+
+        /**
+         * @return nodes, who haven't voted yet
+         */
+        Set<String> getNodesWhoHasntVotedYet() {
+            HashSet<String> result = new HashSet<>(all);
+            result.removeAll(rejected);
+            result.removeAll(acquiredVotes);
+            return result;
+        }
     }
 }

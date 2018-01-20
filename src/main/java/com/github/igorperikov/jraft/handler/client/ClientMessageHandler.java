@@ -7,11 +7,12 @@ import com.github.igorperikov.jraft.infrastructure.constants.MessageFields;
 import com.github.igorperikov.jraft.infrastructure.constants.MessageTypes;
 
 public abstract class ClientMessageHandler implements MessageHandler {
-    protected MaelstromMessage buildDenyResponse(MaelstromMessage request) {
+    protected MaelstromMessage buildDenyResponse(MaelstromMessage request, int nextMessageId) {
         return MaelstromMessage.of(
                 request.getSrc(),
                 request.getDest(),
-                MessageFields.BODY_MSG_TYPE, MessageTypes.ERROR,
+                MessageTypes.ERROR,
+                nextMessageId,
                 MessageFields.BODY_MSG_ERROR_CODE, MessageErrorCodes.UNABLE_TO_SERVE,
                 MessageFields.BODY_MSG_IN_REPLY_TO, request.getBody().get(MessageFields.BODY_MSG_ID)
         );

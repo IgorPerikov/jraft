@@ -13,5 +13,5 @@ import java.io.Serializable;
 @ToString
 public class LogEntry implements Serializable {
     private final Command command;
-    private final int term;
+    private final long term;
 }

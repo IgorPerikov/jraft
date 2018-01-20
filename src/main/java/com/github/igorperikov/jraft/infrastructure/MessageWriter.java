@@ -18,7 +18,7 @@ public class MessageWriter {
     }
 
     public void write(MaelstromMessage response) {
-        log.info("Writing response: {}", response);
+        log.info("Writing message: {}", response);
         try {
             objectMapper.writeValue(System.out, response);
         } catch (IOException e) {

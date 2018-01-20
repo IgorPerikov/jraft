@@ -38,7 +38,8 @@ class ReadMessageHandlerTest {
         MaelstromMessage request = MaelstromMessage.of(
                 "src",
                 "dst",
-                MessageFields.BODY_MSG_TYPE, MessageTypes.READ,
+                MessageTypes.READ,
+                42,
                 MessageFields.BODY_MSG_CLIENT_KEY, existingKey
         );
         MaelstromMessage response = handler.handle(request);
@@ -53,7 +54,8 @@ class ReadMessageHandlerTest {
         MaelstromMessage request = MaelstromMessage.of(
                 "src",
                 "dst",
-                MessageFields.BODY_MSG_TYPE, MessageTypes.READ,
+                MessageTypes.READ,
+                42,
                 MessageFields.BODY_MSG_CLIENT_KEY, missingKey
         );
         MaelstromMessage response = handler.handle(request);

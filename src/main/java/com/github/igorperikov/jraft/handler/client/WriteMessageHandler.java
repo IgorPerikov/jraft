@@ -23,7 +23,7 @@ public class WriteMessageHandler extends ClientMessageHandler {
         if (node.getNodeState() == NodeState.LEADER) {
             return null;
         } else {
-            return buildDenyResponse(request);
+            return buildDenyResponse(request, node.getNextMessageId());
         }
     }
 }

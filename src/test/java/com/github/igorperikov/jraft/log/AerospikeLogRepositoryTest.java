@@ -1,6 +1,7 @@
 package com.github.igorperikov.jraft.log;
 
 import com.aerospike.client.AerospikeClient;
+import com.github.igorperikov.jraft.Node;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,7 +30,9 @@ public class AerospikeLogRepositoryTest {
         String containerIpAddress = aerospike.getContainerIpAddress();
         Integer mappedPort = aerospike.getMappedPort(3000);
         AerospikeClient client = new AerospikeClient(containerIpAddress, mappedPort);
-        repository = new AerospikeLogRepository(client, "n1");
+        Node node = new Node();
+        node.setId("n1");
+        repository = new AerospikeLogRepository(client, node);
     }
 
     @Test

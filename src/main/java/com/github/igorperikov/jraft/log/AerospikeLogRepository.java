@@ -6,7 +6,9 @@ import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.policy.Policy;
 import com.aerospike.client.policy.WritePolicy;
+import com.github.igorperikov.jraft.Node;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
+@Slf4j
 public class AerospikeLogRepository implements LogRepository {
     private static final String NAMESPACE = "test";
     private static final String SETNAME = "jraft";
@@ -27,7 +30,7 @@ public class AerospikeLogRepository implements LogRepository {
     private static final List<LogEntry> DEFAULT_LOG = Collections.emptyList();
 
     private final AerospikeClient aerospikeClient;
-    private final String nodeId;
+    private final Node node;
 
     @Override
     public long getCurrentTerm() {
@@ -84,6 +87,6 @@ public class AerospikeLogRepository implements LogRepository {
     }
 
     private Key buildKey() {
-        return new Key(NAMESPACE, SETNAME, nodeId);
+        return new Key(NAMESPACE, SETNAME, node.getId());
     }
 }

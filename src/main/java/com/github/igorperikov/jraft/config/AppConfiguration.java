@@ -17,7 +17,7 @@ public class AppConfiguration {
 
     @Bean
     public LogRepository persistenceRepository(AerospikeClient aerospikeClient, Node node) {
-        return new AerospikeLogRepository(aerospikeClient, node.getId());
+        return new AerospikeLogRepository(aerospikeClient, node);
     }
 
     @Bean(destroyMethod = "close")
