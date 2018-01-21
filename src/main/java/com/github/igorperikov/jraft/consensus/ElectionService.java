@@ -154,7 +154,7 @@ public class ElectionService {
                     }
                 }),
                 0,
-                200, // TODO: specify delay
+                maxElectionTimeout / 3, // TODO: specify delay
                 TimeUnit.MILLISECONDS
         );
     }

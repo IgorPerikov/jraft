@@ -37,7 +37,7 @@ public class RaftInitHandler implements MessageHandler {
         init();
         return MaelstromMessage.of(
                 nodeId,
-                request.getDest(),
+                request.getSrc(),
                 MessageTypes.RAFT_INIT_OK,
                 node.getNextMessageId(),
                 MessageFields.BODY_MSG_IN_REPLY_TO, request.getBody().get(MessageFields.BODY_MSG_ID)

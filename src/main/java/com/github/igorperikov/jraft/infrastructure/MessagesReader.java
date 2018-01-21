@@ -49,8 +49,8 @@ public class MessagesReader {
                         }
                     }
                 }),
-                10,
-                10,
+                20,
+                20,
                 TimeUnit.MILLISECONDS
         );
     }
