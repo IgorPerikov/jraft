@@ -56,6 +56,7 @@ public class MessagesReader {
     }
 
     private void readMessage(String jsonMessage) throws IOException {
+        log.info("Message read={}", jsonMessage);
         MaelstromMessage maelstromMessage = objectMapper.readValue(jsonMessage, MaelstromMessage.class);
         messageValidator.validate(maelstromMessage);
         MaelstromMessage response = messageDispatcher.dispatchMessage(maelstromMessage);

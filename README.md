@@ -1,7 +1,7 @@
 java-raft
 ---
-**The work is in progress**
+**Archived**
 
-Java implementation of [Raft consensus algorithm](https://raft.github.io/)
+Raw and not completed Java implementation of [Raft consensus algorithm](https://raft.github.io/)
 
 Implementation adopted to be tested via [Maelstrom](https://github.com/jepsen-io/maelstrom)

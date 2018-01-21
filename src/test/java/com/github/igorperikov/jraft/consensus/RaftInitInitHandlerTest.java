@@ -43,7 +43,7 @@ class RaftInitInitHandlerTest {
                 () -> assertTrue(node.isInitialized()),
                 () -> assertEquals(MessageTypes.RAFT_INIT_OK, response.getBody().get(MessageFields.BODY_MSG_TYPE)),
                 () -> assertEquals(msgId, response.getBody().get(MessageFields.BODY_MSG_IN_REPLY_TO)),
-                () -> assertEquals(response.getDest(), message.getSrc()),
+                () -> assertEquals(response.getDest(), nodeId),
                 () -> assertEquals(nodeId, response.getSrc())
         );
     }

@@ -17,7 +17,6 @@ public class RequestVoteHandler implements MessageHandler {
 
     @Override
     public MaelstromMessage handle(MaelstromMessage maelstromMessage) {
-        log.info("Request vote obtained={}", maelstromMessage);
         return null;
     }
 }

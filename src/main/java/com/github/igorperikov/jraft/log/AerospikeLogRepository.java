@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// TODO: check for race conditions
 @AllArgsConstructor
 @Slf4j
 public class AerospikeLogRepository implements LogRepository {

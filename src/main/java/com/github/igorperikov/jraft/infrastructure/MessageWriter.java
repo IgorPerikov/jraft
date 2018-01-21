@@ -21,6 +21,7 @@ public class MessageWriter {
         log.info("Writing message: {}", response);
         try {
             objectMapper.writeValue(System.out, response);
+            System.out.println("\r\n");
         } catch (IOException e) {
             log.error("", e);
         }
