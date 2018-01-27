@@ -4,30 +4,30 @@ import unittest
 
 class MyTestCase(unittest.TestCase):
     def test_sort_zero_size_array(self):
-        search = MergeSearch([])
-        self.assertEqual([], search.sort())
+        sort = MergeSort([])
+        self.assertEqual([], sort.sort())
 
     def test_sort_single_size_array(self):
-        search = MergeSearch([1])
-        self.assertEqual([1], search.sort())
+        sort = MergeSort([1])
+        self.assertEqual([1], sort.sort())
 
     def test_sort_even_size_array(self):
         array = [3, 1, 10, 5, 5, 0]
-        search = MergeSearch(array)
-        self.assertEqual(sorted(array), search.sort())
+        sort = MergeSort(array)
+        self.assertEqual(sorted(array), sort.sort())
 
     def test_sort_odd_size_array(self):
         array = [7, 1, 2, 9, -2]
-        search = MergeSearch(array)
-        self.assertEqual(sorted(array), search.sort())
+        sort = MergeSort(array)
+        self.assertEqual(sorted(array), sort.sort())
 
     def test_sort_big_size_array(self):
         array = [7, 1, 2, 9, -2, -5, 5, 3, 5, 0, -10]
-        search = MergeSearch(array)
-        self.assertEqual(sorted(array), search.sort())
+        sort = MergeSort(array)
+        self.assertEqual(sorted(array), sort.sort())
 
 
-class MergeSearch:
+class MergeSort:
     def __init__(self, array):
         self.array = array
 
